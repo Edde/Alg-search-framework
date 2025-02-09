@@ -1,10 +1,10 @@
 import numpy as np
 default_state = {
     "co": np.array([0, 0, 0, 0, 0, 0, 0, 0], np.dtype("int8")),
-    "cp": np.array([0, 1, 2, 3, 4, 5, 6, 7], np.dtype("int8")),
+    "cp": np.array([1, 2, 3, 4, 5, 6, 7, 8], np.dtype("int8")),
     "eo": np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], np.dtype("int8")),
-    "ep": np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], np.dtype("int8")),
-    "cep": np.array([0, 1, 2, 3, 4, 5], np.dtype("int8"))
+    "ep": np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], np.dtype("int8")),
+    "cep": np.array([1, 2, 3, 4, 5, 6], np.dtype("int8"))
 }
 category_names = {
     "co": "Corner orientation",
@@ -21,9 +21,9 @@ piece_names = {
     "cep": ["D", "U", "L", "F", "R", "B"]
 }
 names_to_default_indexes = {
-    "DBL": 0, "DLF": 1, "DFR": 2, "DRB": 3, "ULB": 4, "UFL": 5, "URF": 6, "UBR": 7,
-    "DL": 0, "DF": 1, "DR": 2, "DB": 3, "LB": 4, "LF": 5, "RF": 6, "RB": 7, "UL": 8, "UF": 9, "UR": 10, "UB": 11,
-    "D": 0, "U": 1, "L": 2, "F": 3, "R": 4, "B": 5
+    "DBL": 1, "DLF": 2, "DFR": 3, "DRB": 4, "ULB": 5, "UFL": 6, "URF": 7, "UBR": 8,
+    "DL": 1, "DF": 2, "DR": 3, "DB": 4, "BL": 5, "FL": 6, "FR": 7, "BR": 8, "UL": 9, "UF": 10, "UR": 11, "UB": 12,
+    "D": 1, "U": 2, "L": 3, "F": 4, "R": 5, "B": 6
 }
 category_types = {
     "order": ["co", "eo", "cp", "ep", "cep"],
@@ -34,7 +34,7 @@ category_types = {
     "cep": ("p")
 }
 
-def state_to_puzzlegen(state, piece_names, extra_options=None, extra_puzzle_options=None, color_scheme=None):
+def state_to_puzzlegen(state, masking=None, extra_options=None, extra_puzzle_options=None, color_scheme=None):
     # State to stickerColors for puzzle-gen
     options = {}
     options["puzzle"] = {}
@@ -48,6 +48,8 @@ def state_to_puzzlegen(state, piece_names, extra_options=None, extra_puzzle_opti
             "B": "puzzleGen.Colors.GREEN",
             "L": "puzzleGen.Colors.ORANGE"
         }
+    if not masking:
+        masking = {"corners":[], "edges":[], "centers":[]}
     options["puzzle"]["size"] = 3
     options["puzzle"]["stickerColors"] = {}
     options["puzzle"]["stickerColors"]["U"] = ["puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR", "puzzleGen.Colors.MASK_COLOR"]
@@ -60,103 +62,157 @@ def state_to_puzzlegen(state, piece_names, extra_options=None, extra_puzzle_opti
     i = 0
     while i < len(state["cp"]):
         orientation = state["co"][i]
-        corner_name = piece_names["co"][state["cp"][i]]
-        corner_name = corner_name[-orientation:] + corner_name[:-orientation]
+        orig_corner_name = piece_names["co"][state["cp"][i]-1]
+        corner_name = orig_corner_name[-orientation:] + orig_corner_name[:-orientation]
         match i:
             case 0:
-                options["puzzle"]["stickerColors"]["D"][0] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["B"][8] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["L"][6] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["D"][0] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["B"][8] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["L"][6] = color_scheme[corner_name[2]]
             case 1:
-                options["puzzle"]["stickerColors"]["D"][6] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["L"][8] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["F"][6] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["D"][6] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["L"][8] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["F"][6] = color_scheme[corner_name[2]]
             case 2:
-                options["puzzle"]["stickerColors"]["D"][8] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["F"][8] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["R"][6] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["D"][8] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["F"][8] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["R"][6] = color_scheme[corner_name[2]]
             case 3:
-                options["puzzle"]["stickerColors"]["D"][2] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["R"][8] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["B"][6] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["D"][2] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["R"][8] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["B"][6] = color_scheme[corner_name[2]]
             case 4:
-                options["puzzle"]["stickerColors"]["U"][0] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["L"][0] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["B"][2] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["U"][0] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["L"][0] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["B"][2] = color_scheme[corner_name[2]]
             case 5:
-                options["puzzle"]["stickerColors"]["U"][6] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["F"][0] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["L"][2] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["U"][6] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["F"][0] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["L"][2] = color_scheme[corner_name[2]]
             case 6:
-                options["puzzle"]["stickerColors"]["U"][8] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["R"][0] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["F"][2] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["U"][8] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["R"][0] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["F"][2] = color_scheme[corner_name[2]]
             case 7:
-                options["puzzle"]["stickerColors"]["U"][2] = color_scheme[corner_name[0]]
-                options["puzzle"]["stickerColors"]["B"][0] = color_scheme[corner_name[1]]
-                options["puzzle"]["stickerColors"]["R"][2] = color_scheme[corner_name[2]]
+                if orig_corner_name+corner_name[0] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["U"][2] = color_scheme[corner_name[0]]
+                if orig_corner_name+corner_name[1] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["B"][0] = color_scheme[corner_name[1]]
+                if orig_corner_name+corner_name[2] not in masking["corners"]:
+                    options["puzzle"]["stickerColors"]["R"][2] = color_scheme[corner_name[2]]
         i += 1
     #centers
     i = 0
     while i < len(state["cep"]):
-        center_name = piece_names["cep"][state["cep"][i]]
+        center_name = piece_names["cep"][state["cep"][i]-1]
         match i:
             case 0:
-                options["puzzle"]["stickerColors"]["D"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["D"][4] = color_scheme[center_name]
             case 1:
-                options["puzzle"]["stickerColors"]["U"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["U"][4] = color_scheme[center_name]
             case 2:
-                options["puzzle"]["stickerColors"]["L"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["L"][4] = color_scheme[center_name]
             case 3:
-                options["puzzle"]["stickerColors"]["F"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["F"][4] = color_scheme[center_name]
             case 4:
-                options["puzzle"]["stickerColors"]["R"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["R"][4] = color_scheme[center_name]
             case 5:
-                options["puzzle"]["stickerColors"]["B"][4] = color_scheme[center_name]
+                if center_name not in masking["centers"]:
+                    options["puzzle"]["stickerColors"]["B"][4] = color_scheme[center_name]
         i += 1
     #edges
     i = 0
     while i < len(state["ep"]):
         orientation = state["eo"][i]
-        edge_name = piece_names["eo"][state["ep"][i]]
-        edge_name = edge_name[-orientation:] + edge_name[:-orientation]
+        orig_edge_name = piece_names["eo"][state["ep"][i]-1]
+        edge_name = orig_edge_name[-orientation:] + orig_edge_name[:-orientation]
         match i:
             case 0:
-                options["puzzle"]["stickerColors"]["D"][3] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["L"][7] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["D"][3] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["L"][7] = color_scheme[edge_name[1]]
             case 1:
-                options["puzzle"]["stickerColors"]["D"][7] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["F"][7] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["D"][7] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["F"][7] = color_scheme[edge_name[1]]
             case 2:
-                options["puzzle"]["stickerColors"]["D"][5] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["R"][7] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["D"][5] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["R"][7] = color_scheme[edge_name[1]]
             case 3:
-                options["puzzle"]["stickerColors"]["D"][1] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["B"][7] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["D"][1] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["B"][7] = color_scheme[edge_name[1]]
             case 4:
-                options["puzzle"]["stickerColors"]["B"][5] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["L"][3] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["B"][5] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["L"][3] = color_scheme[edge_name[1]]
             case 5:
-                options["puzzle"]["stickerColors"]["F"][3] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["L"][5] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["F"][3] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["L"][5] = color_scheme[edge_name[1]]
             case 6:
-                options["puzzle"]["stickerColors"]["F"][5] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["R"][3] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["F"][5] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["R"][3] = color_scheme[edge_name[1]]
             case 7:
-                options["puzzle"]["stickerColors"]["B"][3] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["R"][5] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["B"][3] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["R"][5] = color_scheme[edge_name[1]]
             case 8:
-                options["puzzle"]["stickerColors"]["U"][3] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["L"][1] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["U"][3] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["L"][1] = color_scheme[edge_name[1]]
             case 9:
-                options["puzzle"]["stickerColors"]["U"][7] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["F"][1] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["U"][7] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["F"][1] = color_scheme[edge_name[1]]
             case 10:
-                options["puzzle"]["stickerColors"]["U"][5] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["R"][1] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["U"][5] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["R"][1] = color_scheme[edge_name[1]]
             case 11:
-                options["puzzle"]["stickerColors"]["U"][1] = color_scheme[edge_name[0]]
-                options["puzzle"]["stickerColors"]["B"][1] = color_scheme[edge_name[1]]
+                if orig_edge_name+edge_name[0] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["U"][1] = color_scheme[edge_name[0]]
+                if orig_edge_name+edge_name[1] not in masking["edges"]:
+                    options["puzzle"]["stickerColors"]["B"][1] = color_scheme[edge_name[1]]
         i += 1
     options_str = "{'puzzle': {'size': 3, 'stickerColors': {"
     for face, stickers in options["puzzle"]["stickerColors"].items():
