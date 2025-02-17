@@ -1,5 +1,37 @@
 import numpy as np
 
+def execute_move_full(state, move):
+    new_state = {}
+    if "cp" in move:
+        new_state["co"] = move["cp"] @ state["co"]
+        new_state["cp"] = move["cp"] @ state["cp"]
+    else:
+        new_state["co"] = state["co"]
+        new_state["cp"] = state["cp"]
+    if "co" in move:
+        new_state["co"] = np.mod(new_state["co"]+move["co"], 3)
+    new_state["eo"] = move["ep"] @ state["eo"]
+    new_state["ep"] = move["ep"] @ state["ep"]
+    if "eo" in move:
+        new_state["eo"] = np.mod(new_state["eo"]+move["eo"], 2)
+    if "cep" in move:
+        new_state["cep"] = move["cep"] @ state["cep"]
+    else:
+        new_state["cep"] = state["cep"]
+    return new_state
+def execute_move_RU(state, move):
+    new_state = {}
+    if "cp" in move:
+        new_state["co"] = move["cp"] @ state["co"]
+        new_state["cp"] = move["cp"] @ state["cp"]
+    else:
+        new_state["co"] = state["co"]
+        new_state["cp"] = state["cp"]
+    if "co" in move:
+        new_state["co"] = np.mod(new_state["co"]+move["co"], 3)
+    new_state["ep"] = move["ep"] @ state["ep"]
+    return new_state
+
 identity = np.array([[1,0,0,0,0,0,0,0,0,0,0,0],
                         [0,1,0,0,0,0,0,0,0,0,0,0],
                         [0,0,1,0,0,0,0,0,0,0,0,0],
