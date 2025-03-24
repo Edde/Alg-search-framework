@@ -20,6 +20,13 @@ piece_names = {
     "ep": ["DL", "DF", "DR", "DB", "BL", "FL", "FR", "BR", "UL", "UF", "UR", "UB"],
     "cep": ["D", "U", "L", "F", "R", "B"]
 }
+piece_names_clean = {
+    "co": ["DBL", "DFL", "DFR", "DBR", "UBL", "UFL", "UFR", "UBR"],
+    "cp": ["DBL", "DFL", "DFR", "DBR", "UBL", "UFL", "UFR", "UBR"],
+    "eo": ["DL", "DF", "DR", "DB", "BL", "FL", "FR", "BR", "UL", "UF", "UR", "UB"],
+    "ep": ["DL", "DF", "DR", "DB", "BL", "FL", "FR", "BR", "UL", "UF", "UR", "UB"],
+    "cep": ["D", "U", "L", "F", "R", "B"]
+}
 names_to_default_indexes = {
     "DBL": 1, "DLF": 2, "DFR": 3, "DRB": 4, "ULB": 5, "UFL": 6, "URF": 7, "UBR": 8,
     "DL": 1, "DF": 2, "DR": 3, "DB": 4, "BL": 5, "FL": 6, "FR": 7, "BR": 8, "UL": 9, "UF": 10, "UR": 11, "UB": 12,

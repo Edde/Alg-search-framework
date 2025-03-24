@@ -51,3 +51,9 @@ class Tree:
             for child in self.children:
                 return_list += child.get_all_leaves()
             return return_list
+    
+    def get_last_n(self, n_moves):
+        if n_moves == 1:
+            return [self.last_move]
+        else:
+            return [self.last_move]+self.parent.get_last_n(n_moves-1)
