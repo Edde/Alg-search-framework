@@ -8,6 +8,9 @@ def execute_move_full(state, move):
         new_state["co"] = np.mod(new_state["co"]+move["co"], 3)
     return new_state
 
+def execute_move_dr(state, move):
+    return {"cp": move["cp"] @ state["cp"]}
+
 identity = np.array([[1,0,0,0,0,0,0,0,0,0,0,0],
                         [0,1,0,0,0,0,0,0,0,0,0,0],
                         [0,0,1,0,0,0,0,0,0,0,0,0],

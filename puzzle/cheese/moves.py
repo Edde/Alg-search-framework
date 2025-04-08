@@ -1,10 +1,6 @@
 import numpy as np
 def execute_move(state, move):
-    new_state = {}
-    new_state["cp"] = move @ state["cp"]
-    return new_state
-
-moves_list = ["S", "U", "U2", "U3", "U2'", "U'", "D", "D2", "D3", "D2'", "D'"]
+    return move @ state
 
 moves = {
     "identity": np.array([[1,0,0,0,0,0,0,0,0,0,0,0],
@@ -152,3 +148,32 @@ moves = {
                     [0,0,0,0,0,0,0,0,0,0,1,0],
                     [0,0,0,0,0,0,0,0,0,0,0,1]], np.dtype("int8"))
 }
+composite_moves = {
+    "U D": moves["D"] @ moves["U"],
+    "U D2": moves["D2"] @ moves["U"],
+    "U D3": moves["D3"] @ moves["U"],
+    "U D2'": moves["D2'"] @ moves["U"],
+    "U D'": moves["D'"] @ moves["U"],
+    "U2 D": moves["D"] @ moves["U"],
+    "U2 D2": moves["D2"] @ moves["U"],
+    "U2 D3": moves["D3"] @ moves["U"],
+    "U2 D2'": moves["D2'"] @ moves["U"],
+    "U2 D'": moves["D'"] @ moves["U"],
+    "U3 D": moves["D"] @ moves["U"],
+    "U3 D2": moves["D2"] @ moves["U"],
+    "U3 D3": moves["D3"] @ moves["U"],
+    "U3 D2'": moves["D2'"] @ moves["U"],
+    "U3 D'": moves["D'"] @ moves["U"],
+    "U2' D": moves["D"] @ moves["U"],
+    "U2' D2": moves["D2"] @ moves["U"],
+    "U2' D3": moves["D3"] @ moves["U"],
+    "U2' D2'": moves["D2'"] @ moves["U"],
+    "U2' D'": moves["D'"] @ moves["U"],
+    "U' D": moves["D"] @ moves["U"],
+    "U' D2": moves["D2"] @ moves["U"],
+    "U' D3": moves["D3"] @ moves["U"],
+    "U' D2'": moves["D2'"] @ moves["U"],
+    "U' D'": moves["D'"] @ moves["U"]
+}
+all_moves = moves|composite_moves
+non_slice_moves = ["U", "U2", "U3", "U2'", "U'", "D", "D2", "D3", "D2'", "D'"] + list(composite_moves.keys())

@@ -25,14 +25,12 @@ class Tree:
         return all_states
     
     def get_scramble_alg(self):
-        #print(self.state)
         if not self.is_root():
             return self.parent.get_scramble_alg().strip(" -")+" "+self.last_move.strip(" -")
         return ""
     
     def get_solving_alg(self):
-        #print(self.state)
-        if not self.is_root():
+        if not self.is_root() or not self.is_solved:
             return self.get_inverted_move().strip(" -")+" "+self.parent.get_solving_alg().strip(" -")
         return ""
 
