@@ -11,19 +11,34 @@ def execute_move_full(state, move):
 def execute_move_dr(state, move):
     return {"cp": move["cp"] @ state["cp"]}
 
-identity = np.array([[1,0,0,0,0,0,0,0,0,0,0,0],
-                        [0,1,0,0,0,0,0,0,0,0,0,0],
-                        [0,0,1,0,0,0,0,0,0,0,0,0],
-                        [0,0,0,1,0,0,0,0,0,0,0,0],
-                        [0,0,0,0,1,0,0,0,0,0,0,0],
-                        [0,0,0,0,0,1,0,0,0,0,0,0],
-                        [0,0,0,0,0,0,1,0,0,0,0,0],
-                        [0,0,0,0,0,0,0,1,0,0,0,0],
-                        [0,0,0,0,0,0,0,0,1,0,0,0],
-                        [0,0,0,0,0,0,0,0,0,1,0,0],
-                        [0,0,0,0,0,0,0,0,0,0,1,0],
-                        [0,0,0,0,0,0,0,0,0,0,0,1]], np.dtype("int8"))
+default_state = {
+    "co": np.array([0, 0, 0, 0, 0, 0, 0, 0], np.dtype("int8")),
+    "cp": np.array([1, 2, 3, 4, 5, 6, 7, 8], np.dtype("int8"))
+}
+category_names = {
+    "co": "Corner orientation",
+    "cp": "Corner permutation"
+}
+piece_names = {
+    "co": ["DBL", "DLF", "DFR", "DRB", "ULB", "UFL", "URF", "UBR"],
+    "cp": ["DBL", "DLF", "DFR", "DRB", "ULB", "UFL", "URF", "UBR"]
+}
+names_to_default_indexes = {
+    "DBL": 1, "DLF": 2, "DFR": 3, "DRB": 4, "ULB": 5, "UFL": 6, "URF": 7, "UBR": 8
+}
+
 moves = {
+    "I": {
+        "co": np.array([0,0,0,0,0,0,0,0], np.dtype("int8")),
+        "cp": np.array([[1,0,0,0,0,0,0,0],
+                        [0,1,0,0,0,0,0,0],
+                        [0,0,1,0,0,0,0,0],
+                        [0,0,0,1,0,0,0,0],
+                        [0,0,0,0,1,0,0,0],
+                        [0,0,0,0,0,1,0,0],
+                        [0,0,0,0,0,0,1,0],
+                        [0,0,0,0,0,0,0,1]], np.dtype("int8"))
+    },
     "U": {
         "cp": np.array([[1,0,0,0,0,0,0,0],
                         [0,1,0,0,0,0,0,0],

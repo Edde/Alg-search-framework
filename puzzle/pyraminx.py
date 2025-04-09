@@ -1,4 +1,17 @@
 import numpy as np
+default_state = {
+    "co": np.array([0, 0, 0, 0], np.dtype("int8")),
+    "to": np.array([0, 0, 0, 0], np.dtype("int8")),
+    "eo": np.array([0, 0, 0, 0, 0, 0], np.dtype("int8")),
+    "ep": np.array([1, 2, 3, 4, 5, 6], np.dtype("int8"))
+}
+piece_names = {
+    "co": ["CU", "CR", "CL", "CB"],
+    "to": ["TU", "TR", "TL", "TB"],
+    "eo": ["DL", "DF", "DR", "UR", "UL", "UB"],
+    "ep": ["DL", "DF", "DR", "UR", "UL", "UB"]
+}
+
 def execute_move(state, move):
     new_state = {}
     new_state["to"] = np.mod(state["to"]+move["to"], 3)
@@ -14,12 +27,14 @@ def execute_move(state, move):
         new_state["eo"] = state["eo"]
         new_state["ep"] = state["ep"]
     return new_state
+
 def execute_no_ct(state, move):
     new_state = {}
     new_state["eo"] = move["ep"] @ state["eo"]
     new_state["ep"] = move["ep"] @ state["ep"]
     new_state["eo"] = np.mod(new_state["eo"]+move["eo"], 2)
     return new_state
+
 moves = {
     "I": {
         "co": np.array([0,0,0,0], np.dtype("int8")),
