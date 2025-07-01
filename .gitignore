@@ -1,10 +1,11 @@
 __pycache__
-test.html
 puzzleGen.min.js
 puzzleGen.min.js.map
 jquery-3.7.1.min.js
 /*.py
+/*.txt
 /*.json
 /*.csv
+/*.html
 !treestruct.py
 !utils.py
