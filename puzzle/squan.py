@@ -78,7 +78,7 @@ def execute_move(state, move):
 def execute_alg(state, alg):
     if alg:
         if type(alg) == str:
-            alg = alg.split(" ")
+            alg = alg.strip().split(" ")
         new_state = state
         for step in alg:
             step = step.strip()
